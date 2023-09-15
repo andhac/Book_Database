@@ -6,7 +6,7 @@ let books = [
     language: "en",
     pubDate: "2000-01-01",
     numOfPage: 100,
-    category: ["Fantasy", "Adventure", "Action", "Thriller"],
+    category: ["Fantasy", "Adventure", "Action", "Thriller", "Horror"],
     publication: 1,
   },
   {
@@ -18,19 +18,21 @@ let books = [
     numOfPage: 300,
     category: ["Fantasy", "Adventure", "Action", "Thriller"],
     publication: 1,
-  },
+  }
+  
 ];
 let author = [
   {
     id: 1,
     name: "J. R. R. Tolkien",
-    books: ["1234ONE", "1234TWO"],
+    books: ["1234ONE"],
   },
   {
     id: 2,
     name: "J. K. Rowling",
-    books: ["1234ONE", "1234TWO"],
-  },
+    books: ["1234TWO"],
+  }
+
 ];
 let publication = [
   {
@@ -42,11 +44,11 @@ let publication = [
     id: 2,
     name: "Bloomsbury Publishing",
     books: [],
-  },
+  }
 ];
 
-module.exports ={
-    books,
-    author,
-    publication
-}
+module.exports = {
+  books,
+  author,
+  publication,
+};
