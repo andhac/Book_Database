@@ -18,9 +18,9 @@ let books = [
     numOfPage: 300,
     category: ["Fantasy", "Adventure", "Action", "Thriller"],
     publication: 1,
-  }
-  
+  },
 ];
+
 let author = [
   {
     id: 1,
@@ -31,9 +31,9 @@ let author = [
     id: 2,
     name: "J. K. Rowling",
     books: ["1234TWO"],
-  }
-
+  },
 ];
+
 let publication = [
   {
     id: 1,
@@ -44,7 +44,7 @@ let publication = [
     id: 2,
     name: "Bloomsbury Publishing",
     books: [],
-  }
+  },
 ];
 
 module.exports = {
