@@ -87,23 +87,24 @@ app.get("/books", async (req, res) => {
   return res.json(getAllBooks);
 });
 
-//http://localhost:3000/book-isbn/1234THREE
-app.get("/book-isbn/:isbn", async (req, res) => {
+//http://localhost:3000/book-isbn/1234ONE
+app.get("/book-isbn/:isbn", (req, res) => {
   const { isbn } = req.params;
   // const isbn = req.params.isbn; //same as above
-  const getSpecificBook = await bookModel.findOne({ ISBN: isbn });
-  if (getSpecificBook == null) {
-    // remove . length === 0 because findOne not return array it return object
+  const getSpecificBook = dbs.books.filter((book) => book.ISBN == isbn);
+  if (getSpecificBook.length === 0) {
     return res.json({ Error: `Book Not Found with this ISBN${isbn}` });
   }
   return res.json(getSpecificBook);
 });
 
 //http://localhost:3000/book-cate/1234ONE
-app.get("/book-cate/:category", async (req, res) => {
+app.get("/book-cate/:category", (req, res) => {
   const { category } = req.params;
 
-  const getSpecificBook = await bookModel.find({ category: category }); //includes is used to check if the category is present in the array or not
+  const getSpecificBook = dbs.books.filter((book) =>
+    book.category.includes(category)
+  ); //includes is used to check if the category is present in the array or not
   if (getSpecificBook.length === 0) {
     return res.json({ Error: `Book Not Found with this Category ${category}` });
   }
@@ -159,12 +160,10 @@ app.get("/publication-id/:id", (req, res) => {
 //POST API'S
 
 //http://localhost:3000/book
-app.post("/book", async (req, res) => {
-  const addNewBook = await bookModel.create(req.body);
-  return res.json({
-    book: addNewBook,
-    console: `Book was added`,
-  });
+app.post("/book", (req, res) => {
+  console.log(req.body);
+  dbs.books.push(req.body);
+  return res.json(dbs.books);
 });
 
 //http://localhost:3000/author
