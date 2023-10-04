@@ -5,6 +5,28 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+//*************************************************************************************** */
+//Adding Data to the database
+
+// const book = new  bookModel({
+//   ISBN: "IN01243",
+//   title: "How to Be a God one",
+//   author: [1],
+//   language: "Sanskrit",
+//   pubDate: "01-01-2000",
+//   numPage: 69,
+//   category: ["Fiction"],
+//   publication: 1,
+// })
+// book.save()
+// .then((book) => {
+//   console.log("book saved")
+// })
+// .catch((err) => {
+//   console.log('their is an '+ err)
+// })
+
+//*********************************************************************************************** */
 
 // const { MongoClient, ServerApiVersion } = require("mongodb");
 // const uri = require("./atlas_url.js");
@@ -48,9 +70,11 @@ app.use(express.json());
 // main();
 let mongoose = require("mongoose");
 let uri = require("./atlas_url.js");
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+mongoose
+  .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
     console.log("Connected to the Database 🌍");
-});
+  });
 
 //http://localhost:3000
 app.get("/", (req, res) => {
@@ -58,7 +82,7 @@ app.get("/", (req, res) => {
 });
 
 //http://localhost:3000/books
-app.get("/books",async (req, res) => {
+app.get("/books", async (req, res) => {
   const getAllBooks = await bookModel.find();
   return res.json(getAllBooks);
 });
