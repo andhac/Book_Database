@@ -5,6 +5,7 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+
 // const { MongoClient, ServerApiVersion } = require("mongodb");
 // const uri = require("./atlas_url.js");
 
@@ -45,18 +46,19 @@ app.use(express.json());
 //   }
 // };
 // main();
-let mongoosedb = require("mongoose");
+let mongoose = require("mongoose");
 let uri = require("./atlas_url.js");
-mongoosedb.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
     console.log("Connected to the Database 🌍");
 });
+
 //http://localhost:3000
 app.get("/", (req, res) => {
   res.send("Welcome to my Book API");
 });
 
 //http://localhost:3000/books
-app.get("/book",async (req, res) => {
+app.get("/books",async (req, res) => {
   const getAllBooks = await bookModel.find();
   return res.json(getAllBooks);
 });
