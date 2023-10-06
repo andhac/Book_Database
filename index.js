@@ -70,6 +70,7 @@ app.use(express.json());
 // main();
 let mongoose = require("mongoose");
 let uri = require("./atlas_url.js");
+const bookmodel = require("./datbase/books.js");
 mongoose
   .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
@@ -178,6 +179,41 @@ app.post("/publication", (req, res) => {
   dbs.publication.push(req.body);
   return res.json(dbs.publication);
 });
+
+//PUT API'S
+//http://localhost:3000/book-update/125H5
+app.put("/book-update/:isbn", async (req, res) => {
+  const { isbn } = req.params;
+   
+  const updateBook = await bookmodel.findOneAndUpdate(
+    {
+      ISBN: isbn,
+    },
+    req.body,
+    {
+      new: true,
+    }
+  );
+  return res.json({
+    bookUpdated: updateBook,
+    console: `Book was updated`,
+  });
+});
+
+//Delte Api 
+app.delete("/book-delete/:isbn",async (req,res)=>{
+  const {isbn} = req.params;
+  const deleteBook = await bookmodel.deleteOne({ISBN: isbn});
+  if(deleteBook.deletedCount === 0){
+    return res.json({Error: `Book Not Found with this ISBN ${isbn}`});
+  }
+
+  return res.json({
+    bookDeleted: deleteBook,
+    console: `Book was Deleted`,
+  });
+});
+
 
 app.listen(3000, () => {
   console.log("Server Started");

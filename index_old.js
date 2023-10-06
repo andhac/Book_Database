@@ -178,6 +178,29 @@ app.post("/publication", (req, res) => {
   return res.json(dbs.publication);
 });
 
+//Put Api
+app.put("/book-update/:isbn",(req,res)=>{
+  const {isbn} = req.params;
+  dbs.books.forEach((book)=>{
+    if(book.ISBN === isbn){
+      
+      return{...book,...req.body}
+    }
+    return book;
+  })
+  return res.json(dbs.books);
+})
+
 app.listen(3000, () => {
   console.log("Server Started");
 });
+
+
+//Delete Api
+
+app.delete("/book-delete/:isbn",(req,res)=>{
+  const {isbn} = req.params;
+  const filteredBooks = dbs.books.filter((book)=> book.ISBN !== isbn);
+  dbs.books = filteredBooks;
+  return res.json(dbs.books);
+})
