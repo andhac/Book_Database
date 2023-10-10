@@ -1,5 +1,7 @@
 const dbs = require("./datbase/index.js");
 const bookModel = require("./datbase/books.js");
+const authorModel = require("./datbase/author.js");
+const publicationModel = require("./datbase/publication.js");
 const express = require("express");
 // console.log(dbs)
 const app = express();
@@ -112,27 +114,26 @@ app.get("/book-cate/:category", async (req, res) => {
 });
 
 //http://localhost:3000/authors
-app.get("/authors", (req, res) => {
-  const getAllAuthors = dbs.author;
+app.get("/authors", async(req, res) => {
+  const getAllAuthors = await authorModel.find();
   return res.json(getAllAuthors);
 });
 
 //http://localhost:3000/author-id/1
-app.get("/author-id/:id", (req, res) => {
+app.get("/author-id/:id", async(req, res) => {
   const { id } = req.params;
-  const getSpecificAuthor = dbs.author.filter((author) => author.id == id);
-  if (getSpecificAuthor.length === 0) {
+  const getSpecificAuthor =await authorModel.findOne({id: id}) ;
+  if (getSpecificAuthor==null) {
     return res.json({ Error: `Author Not Found with this ID ${id}` });
   }
   return res.json(getSpecificAuthor);
 });
 
 //http://localhost:3000/author-isbn/1234ONE
-app.get("/author-isbn/:isbn", (req, res) => {
+app.get("/author-isbn/:isbn", async(req, res) => {
   const { isbn } = req.params;
-  const getSpecificAuthor = dbs.author.filter((author) =>
-    author.books.includes(isbn)
-  );
+  const getSpecificAuthor = await authorModel.find({books:isbn});
+  
   if (getSpecificAuthor.length == 0) {
     return res.json({ Error: `Author Not Found with this ISBN ${isbn}` });
   }
@@ -140,18 +141,16 @@ app.get("/author-isbn/:isbn", (req, res) => {
 });
 
 //http://localhost:3000/publications
-app.get("/publications", (req, res) => {
-  const getAllPublications = dbs.publication;
+app.get("/publications", async(req, res) => {
+  const getAllPublications = await publicationModel.find();
   return res.json(getAllPublications);
 });
 
 //http://localhost:3000/publication-id/1
-app.get("/publication-id/:id", (req, res) => {
+app.get("/publication-id/:id", async(req, res) => {
   const { id } = req.params;
-  const getSpecificPublication = dbs.publication.filter(
-    (publication) => publication.id == id
-  );
-  if (getSpecificPublication.length == 0) {
+  const getSpecificPublication = await publicationModel.findOne({id: id})
+  if (getSpecificPublication==null) {
     return res.json({ Error: `Publication Not Found with this ID ${id}` });
   }
   return res.json(getSpecificPublication);
@@ -169,15 +168,21 @@ app.post("/book", async (req, res) => {
 });
 
 //http://localhost:3000/author
-app.post("/author", (req, res) => {
-  dbs.author.push(req.body);
-  return res.json(dbs.author);
+app.post("/author", async(req, res) => {
+  const addNewAuthor = await authorModel.create(req.body);
+  return res.json({
+    author: addNewAuthor,
+    console: `Author was added`,
+  })
 });
 
 //http://localhost:3000/publication
-app.post("/publication", (req, res) => {
-  dbs.publication.push(req.body);
-  return res.json(dbs.publication);
+app.post("/publication",async(req, res) => {
+  const addNewPublication = await publicationModel.create(req.body);
+  return res.json({
+    publication: addNewPublication,
+  console: `Publication was added`,
+  });
 });
 
 //PUT API'S
@@ -200,7 +205,11 @@ app.put("/book-update/:isbn", async (req, res) => {
   });
 });
 
+
 //Delte Api 
+
+
+//http://localhost:3000/book-delete/IN0123
 app.delete("/book-delete/:isbn",async (req,res)=>{
   const {isbn} = req.params;
   const deleteBook = await bookmodel.deleteOne({ISBN: isbn});
@@ -213,6 +222,32 @@ app.delete("/book-delete/:isbn",async (req,res)=>{
     console: `Book was Deleted`,
   });
 });
+//http://localhost:3000/author-delete
+app.delete("/author-delete/:id",async(req,res)=>{
+  const {id} = req.params;
+  const deleteAuthor= await authorModel.deleteOne({id:id});
+  if(deleteAuthor.deletedCount==0){
+    return res.json({Error:`With id ${id} their is no author`})
+  }
+  return res.json({
+authorDeleted:deleteAuthor,
+console:"Author Was deleted"
+  })
+})
+
+//http://localhost:3000/publication-delete
+app.delete("/publication-delete/:id",async(req,res)=>{
+  const {id} = req.params;
+  const deletePublication = await publicationModel.deleteOne({id:id});
+  if(deletePublication.deletedCount==0){
+    return res.json({Error:`With this id ${id} their is no publication`})
+  }
+  return res.json({
+    publicationDelete:deletePublication,
+    console:"Publication Deleted "
+  })
+})
+
 
 
 app.listen(3000, () => {
