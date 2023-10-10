@@ -114,26 +114,26 @@ app.get("/book-cate/:category", async (req, res) => {
 });
 
 //http://localhost:3000/authors
-app.get("/authors", async(req, res) => {
+app.get("/authors", async (req, res) => {
   const getAllAuthors = await authorModel.find();
   return res.json(getAllAuthors);
 });
 
 //http://localhost:3000/author-id/1
-app.get("/author-id/:id", async(req, res) => {
+app.get("/author-id/:id", async (req, res) => {
   const { id } = req.params;
-  const getSpecificAuthor =await authorModel.findOne({id: id}) ;
-  if (getSpecificAuthor==null) {
+  const getSpecificAuthor = await authorModel.findOne({ id: id });
+  if (getSpecificAuthor == null) {
     return res.json({ Error: `Author Not Found with this ID ${id}` });
   }
   return res.json(getSpecificAuthor);
 });
 
 //http://localhost:3000/author-isbn/1234ONE
-app.get("/author-isbn/:isbn", async(req, res) => {
+app.get("/author-isbn/:isbn", async (req, res) => {
   const { isbn } = req.params;
-  const getSpecificAuthor = await authorModel.find({books:isbn});
-  
+  const getSpecificAuthor = await authorModel.find({ books: isbn });
+
   if (getSpecificAuthor.length == 0) {
     return res.json({ Error: `Author Not Found with this ISBN ${isbn}` });
   }
@@ -141,16 +141,16 @@ app.get("/author-isbn/:isbn", async(req, res) => {
 });
 
 //http://localhost:3000/publications
-app.get("/publications", async(req, res) => {
+app.get("/publications", async (req, res) => {
   const getAllPublications = await publicationModel.find();
   return res.json(getAllPublications);
 });
 
 //http://localhost:3000/publication-id/1
-app.get("/publication-id/:id", async(req, res) => {
+app.get("/publication-id/:id", async (req, res) => {
   const { id } = req.params;
-  const getSpecificPublication = await publicationModel.findOne({id: id})
-  if (getSpecificPublication==null) {
+  const getSpecificPublication = await publicationModel.findOne({ id: id });
+  if (getSpecificPublication == null) {
     return res.json({ Error: `Publication Not Found with this ID ${id}` });
   }
   return res.json(getSpecificPublication);
@@ -168,20 +168,20 @@ app.post("/book", async (req, res) => {
 });
 
 //http://localhost:3000/author
-app.post("/author", async(req, res) => {
+app.post("/author", async (req, res) => {
   const addNewAuthor = await authorModel.create(req.body);
   return res.json({
     author: addNewAuthor,
     console: `Author was added`,
-  })
+  });
 });
 
 //http://localhost:3000/publication
-app.post("/publication",async(req, res) => {
+app.post("/publication", async (req, res) => {
   const addNewPublication = await publicationModel.create(req.body);
   return res.json({
     publication: addNewPublication,
-  console: `Publication was added`,
+    console: `Publication was added`,
   });
 });
 
@@ -189,7 +189,7 @@ app.post("/publication",async(req, res) => {
 //http://localhost:3000/book-update/125H5
 app.put("/book-update/:isbn", async (req, res) => {
   const { isbn } = req.params;
-   
+
   const updateBook = await bookmodel.findOneAndUpdate(
     {
       ISBN: isbn,
@@ -204,17 +204,50 @@ app.put("/book-update/:isbn", async (req, res) => {
     console: `Book was updated`,
   });
 });
+//http://localhost:3000/author-update/3
+app.put("/author-update/:id", async (req, res) => {
+  const { id } = req.params;
+  const updateAuthor = await authorModel.findOneAndUpdate(
+    {
+      id: id,
+    },
+    req.body,
+    {
+      new: true,
+    }
+  );
+  return res.json({
+    authorUpdate: updateAuthor,
+    console: "Author Updated",
+  });
+});
+//http://localhost:3000/publication-update/2
+app.put("/publication-update/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatePublication = await publicationModel.findOneAndUpdate(
+    {
+      id: id,
+    },
+    req.body,
+    {
+      new: true,
+    }
+  );
+  return res.json({
+    publicationUpdate: updatePublication,
+    console: "Publication Updated",
+  });
+});
 
 
-//Delte Api 
-
+//Delte Api
 
 //http://localhost:3000/book-delete/IN0123
-app.delete("/book-delete/:isbn",async (req,res)=>{
-  const {isbn} = req.params;
-  const deleteBook = await bookmodel.deleteOne({ISBN: isbn});
-  if(deleteBook.deletedCount === 0){
-    return res.json({Error: `Book Not Found with this ISBN ${isbn}`});
+app.delete("/book-delete/:isbn", async (req, res) => {
+  const { isbn } = req.params;
+  const deleteBook = await bookmodel.deleteOne({ ISBN: isbn });
+  if (deleteBook.deletedCount === 0) {
+    return res.json({ Error: `Book Not Found with this ISBN ${isbn}` });
   }
 
   return res.json({
@@ -223,33 +256,40 @@ app.delete("/book-delete/:isbn",async (req,res)=>{
   });
 });
 //http://localhost:3000/author-delete
-app.delete("/author-delete/:id",async(req,res)=>{
-  const {id} = req.params;
-  const deleteAuthor= await authorModel.deleteOne({id:id});
-  if(deleteAuthor.deletedCount==0){
-    return res.json({Error:`With id ${id} their is no author`})
+app.delete("/author-delete/:id", async (req, res) => {
+  const { id } = req.params;
+  const deleteAuthor = await authorModel.deleteOne({ id: id });
+  if (deleteAuthor.deletedCount == 0) {
+    return res.json({ Error: `With id ${id} their is no author` });
   }
   return res.json({
-authorDeleted:deleteAuthor,
-console:"Author Was deleted"
-  })
-})
+    authorDeleted: deleteAuthor,
+    console: "Author Was deleted",
+  });
+});
 
 //http://localhost:3000/publication-delete
-app.delete("/publication-delete/:id",async(req,res)=>{
-  const {id} = req.params;
-  const deletePublication = await publicationModel.deleteOne({id:id});
-  if(deletePublication.deletedCount==0){
-    return res.json({Error:`With this id ${id} their is no publication`})
+app.delete("/publication-delete/:id", async (req, res) => {
+  const { id } = req.params;
+  const deletePublication = await publicationModel.deleteOne({ id: id });
+  if (deletePublication.deletedCount == 0) {
+    return res.json({ Error: `With this id ${id} their is no publication` });
   }
   return res.json({
-    publicationDelete:deletePublication,
-    console:"Publication Deleted "
-  })
-})
+    publicationDelete: deletePublication,
+    console: "Publication Deleted ",
+  });
+});
 
+//404 Page
 
-
+app.get("*", (req, res) => {
+  res.send(`
+        <div style="display: flex; height: 100vh; justify-content: center; align-items: center; color: red;">
+          <h1>Sorry Page Not Found</h1>
+        </div>
+      `);
+});
 app.listen(3000, () => {
   console.log("Server Started");
 });
