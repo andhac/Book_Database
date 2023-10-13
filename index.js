@@ -7,69 +7,6 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-//*************************************************************************************** */
-//Adding Data to the database
-
-// const book = new  bookModel({
-//   ISBN: "IN01243",
-//   title: "How to Be a God one",
-//   author: [1],
-//   language: "Sanskrit",
-//   pubDate: "01-01-2000",
-//   numPage: 69,
-//   category: ["Fiction"],
-//   publication: 1,
-// })
-// book.save()
-// .then((book) => {
-//   console.log("book saved")
-// })
-// .catch((err) => {
-//   console.log('their is an '+ err)
-// })
-
-//*********************************************************************************************** */
-
-// const { MongoClient, ServerApiVersion } = require("mongodb");
-// const uri = require("./atlas_url.js");
-
-// // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-// const client = new MongoClient(uri, {
-//   serverApi: {
-//     version: ServerApiVersion.v1,
-//     strict: true,
-//     deprecationErrors: true,
-//   },
-// });
-// const dbname = "Book_Api";
-// const collection_name = "book";
-
-// const connectToDatabase = async () => {
-//   try {
-//     await client.connect();
-//     console.log(`Connected to the ${dbname} Database`);
-//   } catch (err) {
-//     console.log(`Error connecting to the database: ${err}`);
-//   }
-// };
-// const documentFind = { ISBN: "1234THREE" };
-
-// const main = async () => {
-//   try {
-//     await connectToDatabase();
-//     // let result = await client
-//     //   .db(dbname)
-//     //   .collection(collection_name)
-//     //   .findOne(documentFind);
-//     // console.log("Data Found");
-//     // console.log(result);
-//   } catch (err) {
-//     console.log(`Error connecting to the database: ${err}`);
-//   } finally {
-//     await client.close();
-//   }
-// };
-// main();
 let mongoose = require("mongoose");
 let uri = require("./atlas_url.js");
 const bookmodel = require("./datbase/books.js");
@@ -239,7 +176,6 @@ app.put("/publication-update/:id", async (req, res) => {
   });
 });
 
-
 //Delte Api
 
 //http://localhost:3000/book-delete/IN0123
@@ -255,6 +191,34 @@ app.delete("/book-delete/:isbn", async (req, res) => {
     console: `Book was Deleted`,
   });
 });
+//http://localhost:3000/book-delete-author/125H5/2
+
+app.delete("/book-delete-author/:isbn/:id", async (req, res) => {
+
+  const { isbn, id } = req.params;
+  const getSpecificBook = await bookmodel.findOne({ ISBN: isbn });
+  if (getSpecificBook === null) {
+    return res.json({ Error: `Book Not Found with this ISBN ${isbn}` });
+  } else {
+    getSpecificBook.author = getSpecificBook.author.filter(author => author != id);
+    await getSpecificBook.save();
+    const updateBook = await bookmodel.findOneAndUpdate(
+      {
+        ISBN: isbn,
+      },
+      getSpecificBook,
+      {
+        new: true,
+      }
+    );
+    return res.json({
+      bookUpdated: updateBook,
+      console: `Book was updated`,
+    });
+  }
+});
+
+//
 //http://localhost:3000/author-delete
 app.delete("/author-delete/:id", async (req, res) => {
   const { id } = req.params;
